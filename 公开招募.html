@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>公开招募 · 标签组合筛选（4/5星）</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+      background: #f0f3f8;
+      padding: 24px;
+      overflow-y: scroll;
+    }
+
+    .container {
+      max-width: 1300px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 32px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+      padding: 30px 28px;
+    }
+
+    h1 {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 600;
+      font-size: 1.9rem;
+      color: #0b1c33;
+      margin-bottom: 8px;
+    }
+
+    h1 small {
+      font-size: 1rem;
+      font-weight: 400;
+      color: #4b587c;
+      background: #eef2f6;
+      padding: 6px 16px;
+      border-radius: 40px;
+      margin-left: auto;
+    }
+
+    .subtitle {
+      color: #3e4a62;
+      margin-bottom: 28px;
+      border-left: 5px solid #3b82f6;
+      padding-left: 18px;
+      background: #f8fafd;
+      border-radius: 0 20px 20px 0;
+      line-height: 1.6;
+    }
+
+    .tag-panel {
+      background: #f8fafc;
+      border-radius: 28px;
+      padding: 24px;
+      margin-bottom: 30px;
+      border: 1px solid #dde3ed;
+    }
+
+    .tag-title {
+      font-weight: 600;
+      font-size: 1.2rem;
+      color: #1e2a44;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .tag-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .tag-checkbox-item {
+      display: inline-flex;
+      align-items: center;
+      background: white;
+      border: 1px solid #cbd5e1;
+      border-radius: 40px;
+      padding: 8px 16px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.15s;
+      user-select: none;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    }
+
+    .tag-checkbox-item:hover {
+      background: #e9eef4;
+      border-color: #94a3b8;
+    }
+
+    .tag-checkbox-item input {
+      margin-right: 8px;
+      accent-color: #3b82f6;
+      transform: scale(1.1);
+    }
+
+    .tag-checkbox-item.selected {
+      background: #dbeafe;
+      border-color: #3b82f6;
+    }
+
+    .action-bar {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .btn {
+      background: white;
+      border: 1px solid #cbd5e1;
+      border-radius: 40px;
+      padding: 8px 28px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.15s;
+      color: #1e2a44;
+    }
+
+    .btn:hover {
+      background: #e2e8f0;
+    }
+
+    .btn-primary {
+      background: #3b82f6;
+      border-color: #3b82f6;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #2563eb;
+    }
+
+    .stats {
+      background: #e6edf5;
+      border-radius: 40px;
+      padding: 12px 24px;
+      display: inline-block;
+      margin-bottom: 25px;
+      font-weight: 500;
+      color: #1e2a44;
+    }
+
+    .result-section {
+      display: flex;
+      margin-top: 10px;
+    }
+
+    .star-block {
+      flex-grow: 1;
+      margin-bottom: 40px;
+    }
+
+    .star-header {
+      font-size: 1.8rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding-bottom: 12px;
+      border-bottom: 4px solid;
+      margin-bottom: 20px;
+    }
+
+    .star-header span {
+      background: #2b3b5c;
+      color: white;
+      border-radius: 40px;
+      padding: 5px 22px;
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+
+    .star-5 {
+      border-bottom-color: #fbbf24;
+    }
+
+    .star-4 {
+      border-bottom-color: #9ca3af;
+    }
+
+    .combo-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .combo-card {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 60px;
+      padding: 16px 28px;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+      transition: 0.1s;
+    }
+
+    .combo-card.star-5 {
+      background: #fffbeb;
+      border-color: #fcd34d;
+    }
+
+    .combo-card.star-4 {
+      background: #f9fafc;
+      border-color: #d1d5db;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      flex: 1 1 auto;
+    }
+
+    .tag-badge {
+      background: #e2e8f0;
+      color: #1e293b;
+      border-radius: 40px;
+      padding: 5px 17px;
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    .combo-card.star-5 .tag-badge.tag-selected,.combo-card.star-4 .tag-badge.tag-selected {
+      border: 2px solid #3b82f6;
+    }
+
+    .combo-card.star-5 .tag-badge {
+      background: #fde68a;
+      border: 2px solid #fde68a;
+      color: #78350f;
+    }
+
+    .combo-card.star-4 .tag-badge {
+      background: #d4d4d8;
+      border: 2px solid #d4d4d8;
+      color: #18181b;
+    }
+
+    .operator-names {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px 15px;
+      font-weight: 500;
+    }
+
+    .operator-name {
+      background: white;
+      border-radius: 40px;
+      padding: 5px 20px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+    }
+
+    .combo-card.star-5 .operator-name {
+      background: #fef3c7;
+      border-color: #fbbf24;
+    }
+
+    .empty-message {
+      background: #f1f5f9;
+      border-radius: 60px;
+      padding: 40px;
+      text-align: center;
+      color: #475569;
+      font-size: 1.2rem;
+    }
+
+    footer {
+      margin-top: 40px;
+      text-align: center;
+      color: #6c7a96;
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>
+      🎯 公开招募组合检索
+      <small>4星 / 5星 干员</small>
+    </h1>
+    <div class="subtitle">
+      选择任意标签，下方将列出所有包含这些标签的招募组合（标签集为超集）。每个组合显示其完整标签和对应的干员。
+    </div>
+
+    <!-- 标签选择区 -->
+    <div class="tag-panel">
+      <div class="tag-title">
+        <span>📌 标签多选</span>
+      </div>
+      <div id="tagContainer" class="tag-grid"></div>
+      <div class="action-bar">
+        <button class="btn" id="clearBtn">清空标签</button>
+        <button class="btn btn-primary" id="selectAllBtn">全选标签</button>
+      </div>
+    </div>
+
+    <!-- 统计信息 -->
+    <div class="stats">
+      <span>已选 <span id="selectedCount">0</span> 个标签 · 匹配组合 <span id="comboCount">0</span> 个</span>
+    </div>
+
+    <!-- 结果区域 -->
+    <div id="resultArea" class="result-section"></div>
+
+    <footer>点击标签实时筛选 · 基于已处理组合数据，排除3星</footer>
+  </div>
+
+  <script>
+    (function () {
+      // ----- 原始数据 (直接取自用户提供的最终结果，已排除3星) -----
+      const rawCombos = [
+        {
+          "标签": [
+            "防护"
+          ],
+          "名字": [
+            "米格鲁",
+            "斑点"
+          ],
+          "星级": "3"
+        },
+        {
+          "标签": [
+            "费用回复"
+          ],
+          "名字": [
+            "芬",
+            "香草",
+            "翎羽"
+          ],
+          "星级": "3"
+        },
+        {
+          "标签": [
+            "辅助"
+          ],
+          "名字": [
+            "梓兰"
+          ],
+          "星级": "3"
+        },
+        {
+          "标签": [
+            "减速"
+          ],
+          "名字": [
+            "梓兰"
+          ],
+          "星级": "3"
+        },
+        {
+          "标签": [
+            "近卫"
+          ],
+          "名字": [
+            "月见夜",
+            "玫兰莎",
+            "泡普卡"
+          ],
+          "星级": "3"
+        },
+        {
+          "标签": [
+            "近战位"
+          ],
+          "名字": [
+            "芬",
+            "月见夜",
+            "香草",
+            "米格鲁",
+            "斑点",
+            "玫兰莎",
+            "翎羽",
+            "泡普卡"
+          ],
+          "星级": "3"
+        },
+        {
+          "标签": [
+            "狙击"
+          ],
+          "名字": [
+            "空爆",
+            "安德切尔",
+            "克洛丝"
+          ],
+          "星级": "3"
+        },
+        {
+          "标签": [
+            "群攻"
+          ],
+          "名字": [
+            "炎熔",
+            "空爆",
+            "泡普卡"
+          ],
+          "星级": "3"
+        },
+        {
+          "标签": [
+            "生存"
+          ],
+          "名字": [
+            "玫兰莎",
+            "泡普卡"
+          ],
+          "星级": "3"
+        },
+        {
+          "标签": [
+            "输出"
+          ],
+          "名字": [
+            "月见夜",
+            "史都华德",
+            "安德切尔",
+            "克洛丝",
+            "玫兰莎",
+            "翎羽"
+          ],
+          "星级": "3"
+        },
+        {
+          "标签": [
+            "术师"
+          ],
+          "名字": [
+            "炎熔",
+            "史都华德"
+          ],
+          "星级": "3"
+        },
+        {
+          "标签": [
+            "先锋"
+          ],
+          "名字": [
+            "芬",
+            "香草",
+            "翎羽"
+          ],
+          "星级": "3"
+        },
+        {
+          "标签": [
+            "医疗"
+          ],
+          "名字": [
+            "芙蓉",
+            "安赛尔"
+          ],
+          "星级": "3"
+        },
+        {
+          "标签": [
+            "远程位"
+          ],
+          "名字": [
+            "炎熔",
+            "史都华德",
+            "空爆",
+            "梓兰",
+            "芙蓉",
+            "安德切尔",
+            "克洛丝",
+            "安赛尔"
+          ],
+          "星级": "3"
+        },
+        {
+          "标签": [
+            "治疗"
+          ],
+          "名字": [
+            "斑点",
+            "芙蓉",
+            "安赛尔"
+          ],
+          "星级": "3"
+        },
+        {
+          "标签": [
+            "重装"
+          ],
+          "名字": [
+            "米格鲁",
+            "斑点"
+          ],
+          "星级": "3"
+        },
+        {
+          "标签": [
+            "爆发"
+          ],
+          "名字": [
+            "刻刀"
+          ],
+          "星级": "4"
+        },
+        {
+          "标签": [
+            "控场"
+          ],
+          "名字": [
+            "卡达",
+            "深靛"
+          ],
+          "星级": "4"
+        },
+        {
+          "标签": [
+            "快速复活"
+          ],
+          "名字": [
+            "砾",
+            "孑"
+          ],
+          "星级": "4"
+        },
+        {
+          "标签": [
+            "特种"
+          ],
+          "名字": [
+            "阿消",
+            "暗索",
+            "砾",
+            "孑"
+          ],
+          "星级": "4"
+        },
+        {
+          "标签": [
+            "位移"
+          ],
+          "名字": [
+            "阿消",
+            "暗索"
+          ],
+          "星级": "4"
+        },
+        {
+          "标签": [
+            "削弱"
+          ],
+          "名字": [
+            "流星",
+            "夜烟"
+          ],
+          "星级": "4"
+        },
+        {
+          "标签": [
+            "召唤"
+          ],
+          "名字": [
+            "豆苗"
+          ],
+          "星级": "4"
+        },
+        {
+          "标签": [
+            "支援"
+          ],
+          "名字": [
+            "杜宾",
+            "清流"
+          ],
+          "星级": "4"
+        },
+        {
+          "标签": [
+            "费用回复",
+            "远程位"
+          ],
+          "名字": [
+            "豆苗"
+          ],
+          "星级": "4"
+        },
+        {
+          "标签": [
+            "减速",
+            "近卫"
+          ],
+          "名字": [
+            "霜叶"
+          ],
+          "星级": "4"
+        },
+        {
+          "标签": [
+            "减速",
+            "近战位"
+          ],
+          "名字": [
+            "霜叶"
+          ],
+          "星级": "4"
+        },
+        {
+          "标签": [
+            "减速",
+            "狙击"
+          ],
+          "名字": [
+            "安比尔",
+            "梅",
+            "白雪"
+          ],
+          "星级": "4"
+        },
+        {
+          "标签": [
+            "减速",
+            "群攻"
+          ],
+          "名字": [
+            "格雷伊",
+            "白雪"
+          ],
+          "星级": "4"
+        },
+        {
+          "标签": [
+            "减速",
+            "输出"
+          ],
+          "名字": [
+            "安比尔",
+            "梅",
+            "霜叶"
+          ],
+          "星级": "4"
+        },
+        {
+          "标签": [
+            "减速",
+            "术师"
+          ],
+          "名字": [
+            "格雷伊"
+          ],
+          "星级": "4"
+        },
+        {
+          "标签": [
+            "减速",
+            "治疗"
+          ],
+          "名字": [
+            "波登可"
+          ],
+          "星级": "4"
+        },
+        {
+          "标签": [
+            "狙击",
+            "生存"
+          ],
+          "名字": [
+            "杰西卡"
+          ],
+          "星级": "4"
+        },
+        {
+          "标签": [
+            "群攻",
+            "输出"
+          ],
+          "名字": [
+            "松果"
+          ],
+          "星级": "4"
+        },
+        {
+          "标签": [
+            "生存",
+            "远程位"
+          ],
+          "名字": [
+            "杰西卡"
+          ],
+          "星级": "4"
+        },
+        {
+          "标签": [
+            "先锋",
+            "远程位"
+          ],
+          "名字": [
+            "豆苗"
+          ],
+          "星级": "4"
+        },
+        {
+          "标签": [
+            "先锋",
+            "治疗"
+          ],
+          "名字": [
+            "桃金娘"
+          ],
+          "星级": "4"
+        },
+        {
+          "标签": [
+            "治疗",
+            "费用回复"
+          ],
+          "名字": [
+            "桃金娘"
+          ],
+          "星级": "4"
+        },
+        {
+          "标签": [
+            "治疗",
+            "辅助"
+          ],
+          "名字": [
+            "波登可"
+          ],
+          "星级": "4"
+        },
+        {
+          "标签": [
+            "爆发",
+            "狙击"
+          ],
+          "名字": [
+            "守林人"
+          ],
+          "星级": "5"
+        },
+        {
+          "标签": [
+            "爆发",
+            "群攻"
+          ],
+          "名字": [
+            "莱恩哈特"
+          ],
+          "星级": "5"
+        },
+        {
+          "标签": [
+            "爆发",
+            "远程位"
+          ],
+          "名字": [
+            "守林人",
+            "莱恩哈特"
+          ],
+          "星级": "5"
+        },
+        {
+          "标签": [
+            "辅助",
+            "输出"
+          ],
+          "名字": [
+            "真理"
+          ],
+          "星级": "5"
+        },
+        {
+          "标签": [
+            "减速",
+            "控场"
+          ],
+          "名字": [
+            "格劳克斯"
+          ],
+          "星级": "5"
+        },
+        {
+          "标签": [
+            "减速",
+            "特种"
+          ],
+          "名字": [
+            "食铁兽"
+          ],
+          "星级": "5"
+        },
+        {
+          "标签": [
+            "近卫",
+            "防护"
+          ],
+          "名字": [
+            "星极"
+          ],
+          "星级": "5"
+        },
+        {
+          "标签": [
+            "控场",
+            "费用回复"
+          ],
+          "名字": [
+            "德克萨斯"
+          ],
+          "星级": "5"
+        },
+        {
+          "标签": [
+            "控场",
+            "辅助"
+          ],
+          "名字": [
+            "格劳克斯",
+            "梅尔"
+          ],
+          "星级": "5"
+        },
+        {
+          "标签": [
+            "控场",
+            "近战位"
+          ],
+          "名字": [
+            "德克萨斯",
+            "红",
+            "卡夫卡"
+          ],
+          "星级": "5"
+        },
+        {
+          "标签": [
+            "控场",
+            "特种"
+          ],
+          "名字": [
+            "红",
+            "卡夫卡"
+          ],
+          "星级": "5"
+        },
+        {
+          "标签": [
+            "快速复活",
+            "控场"
+          ],
+          "名字": [
+            "红",
+            "卡夫卡"
+          ],
+          "星级": "5"
+        },
+        {
+          "标签": [
+            "群攻",
+            "防护"
+          ],
+          "名字": [
+            "蜜蜡"
+          ],
+          "星级": "5"
+        },
+        {
+          "标签": [
+            "生存",
+            "防护"
+          ],
+          "名字": [
+            "火神"
+          ],
+          "星级": "5"
+        },
+        {
+          "标签": [
+            "生存",
+            "辅助"
+          ],
+          "名字": [
+            "月禾"
+          ],
+          "星级": "5"
+        },
+        {
+          "标签": [
+            "生存",
+            "重装"
+          ],
+          "名字": [
+            "火神"
+          ],
+          "星级": "5"
+        },
+        {
+          "标签": [
+            "输出",
+            "防护"
+          ],
+          "名字": [
+            "星极",
+            "火神",
+            "雷蛇",
+            "石棉"
+          ],
+          "星级": "5"
+        },
+        {
+          "标签": [
+            "输出",
+            "重装"
+          ],
+          "名字": [
+            "火神",
+            "雷蛇",
+            "石棉"
+          ],
+          "星级": "5"
+        },
+        {
+          "标签": [
+            "术师",
+            "爆发"
+          ],
+          "名字": [
+            "莱恩哈特"
+          ],
+          "星级": "5"
+        },
+        {
+          "标签": [
+            "术师",
+            "防护"
+          ],
+          "名字": [
+            "蜜蜡"
+          ],
+          "星级": "5"
+        },
+        {
+          "标签": [
+            "术师",
+            "治疗"
+          ],
+          "名字": [
+            "夜魔"
+          ],
+          "星级": "5"
+        },
+        {
+          "标签": [
+            "特种",
+            "生存"
+          ],
+          "名字": [
+            "狮蝎",
+            "绮良"
+          ],
+          "星级": "5"
+        },
+        {
+          "标签": [
+            "位移",
+            "防护"
+          ],
+          "名字": [
+            "可颂"
+          ],
+          "星级": "5"
+        },
+        {
+          "标签": [
+            "位移",
+            "减速"
+          ],
+          "名字": [
+            "食铁兽"
+          ],
+          "星级": "5"
+        },
+        {
+          "标签": [
+            "位移",
+            "输出"
+          ],
+          "名字": [
+            "崖心"
+          ],
+          "星级": "5"
+        },
+        {
+          "标签": [
+            "位移",
+            "重装"
+          ],
+          "名字": [
+            "可颂"
+          ],
+          "星级": "5"
+        },
+        {
+          "标签": [
+            "先锋",
+            "控场"
+          ],
+          "名字": [
+            "德克萨斯"
+          ],
+          "星级": "5"
+        },
+        {
+          "标签": [
+            "先锋",
+            "支援"
+          ],
+          "名字": [
+            "凛冬",
+            "极境"
+          ],
+          "星级": "5"
+        },
+        {
+          "标签": [
+            "削弱",
+            "辅助"
+          ],
+          "名字": [
+            "初雪",
+            "巫恋"
+          ],
+          "星级": "5"
+        },
+        {
+          "标签": [
+            "削弱",
+            "近战位"
+          ],
+          "名字": [
+            "槐琥"
+          ],
+          "星级": "5"
+        },
+        {
+          "标签": [
+            "削弱",
+            "快速复活"
+          ],
+          "名字": [
+            "槐琥"
+          ],
+          "星级": "5"
+        },
+        {
+          "标签": [
+            "削弱",
+            "群攻"
+          ],
+          "名字": [
+            "陨星",
+            "慑砂"
+          ],
+          "星级": "5"
+        },
+        {
+          "标签": [
+            "削弱",
+            "特种"
+          ],
+          "名字": [
+            "槐琥"
+          ],
+          "星级": "5"
+        },
+        {
+          "标签": [
+            "远程位",
+            "防护"
+          ],
+          "名字": [
+            "蜜蜡"
+          ],
+          "星级": "5"
+        },
+        {
+          "标签": [
+            "召唤",
+            "辅助"
+          ],
+          "名字": [
+            "梅尔"
+          ],
+          "星级": "5"
+        },
+        {
+          "标签": [
+            "召唤",
+            "控场"
+          ],
+          "名字": [
+            "梅尔"
+          ],
+          "星级": "5"
+        },
+        {
+          "标签": [
+            "支援",
+            "费用回复"
+          ],
+          "名字": [
+            "凛冬",
+            "极境"
+          ],
+          "星级": "5"
+        },
+        {
+          "标签": [
+            "支援",
+            "辅助"
+          ],
+          "名字": [
+            "月禾"
+          ],
+          "星级": "5"
+        },
+        {
+          "标签": [
+            "支援",
+            "生存"
+          ],
+          "名字": [
+            "月禾"
+          ],
+          "星级": "5"
+        },
+        {
+          "标签": [
+            "治疗",
+            "输出"
+          ],
+          "名字": [
+            "夜魔"
+          ],
+          "星级": "5"
+        },
+        {
+          "标签": [
+            "减速",
+            "术师",
+            "输出"
+          ],
+          "名字": [
+            "夜魔"
+          ],
+          "星级": "5"
+        },
+        {
+          "标签": [
+            "群攻",
+            "输出",
+            "近卫"
+          ],
+          "名字": [
+            "断崖"
+          ],
+          "星级": "5"
+        },
+        {
+          "标签": [
+            "群攻",
+            "输出",
+            "近战位"
+          ],
+          "名字": [
+            "断崖"
+          ],
+          "星级": "5"
+        }
+      ];
+
+      // 为了确保数据干净，再次过滤星级（以防万一）
+      const combos = rawCombos.filter(c => c.星级 === '4' || c.星级 === '5');
+
+      // ----- 提取所有标签（唯一，排序）-----
+      const allTagsSet = new Set();
+      combos.forEach(combo => {
+        combo.标签.forEach(tag => allTagsSet.add(tag));
+      });
+
+      // const allTags = Array.from(allTagsSet).sort((a,b) => a.localeCompare(b, 'zh'));
+      // console.log(allTags)
+      const allTags = ['近卫', '狙击', '重装', '辅助', '术师', '特种', '先锋', '近战位', '远程位', '费用回复', '爆发', '防护', '减速', '控场', '快速复活', '群攻', '生存', '输出', '位移', '削弱', '召唤', '支援', '治疗'];
+
+      // ----- 渲染标签复选框 -----
+      const tagContainer = document.getElementById('tagContainer');
+      function renderTags() {
+        tagContainer.innerHTML = '';
+        let id = 1;
+        allTags.forEach(tag => {
+          const label = document.createElement('label');
+          label.className = 'tag-checkbox-item';
+          label.for = `tag-checkbox-item-${id}`;
+          const checkbox = document.createElement('input');
+          checkbox.id = `tag-checkbox-item-${id}`;
+          checkbox.type = 'checkbox';
+          checkbox.value = tag;
+          checkbox.className = 'tag-checkbox';
+          label.appendChild(checkbox);
+          label.appendChild(document.createTextNode(tag));
+          tagContainer.appendChild(label);
+        });
+      }
+      renderTags();
+
+      // 获取选中的标签数组
+      function getSelectedTags() {
+        const checkboxes = document.querySelectorAll('.tag-checkbox:checked');
+        return Array.from(checkboxes).map(cb => cb.value);
+      }
+
+      // ----- 更新结果 -----
+      const selectedCountSpan = document.getElementById('selectedCount');
+      const comboCountSpan = document.getElementById('comboCount');
+      const resultArea = document.getElementById('resultArea');
+
+      function updateResults() {
+        const selected = getSelectedTags();
+        selectedCountSpan.textContent = selected.length;
+
+        // 筛选组合：组合的标签必须包含所有选中的标签（即 selected 是 combo.标签 的子集）
+        let matched = combos.filter(combo => {
+          return selected.every(tag => combo.标签.includes(tag));
+        });
+
+        // 按星级分组
+        const star5 = matched.filter(c => c.星级 === '5').sort((a, b) => a.标签.length - b.标签.length);
+        const star4 = matched.filter(c => c.星级 === '4').sort((a, b) => a.标签.length - b.标签.length);
+
+        comboCountSpan.textContent = matched.length;
+
+        // 渲染HTML
+        let html = '';
+        if (matched.length === 0) {
+          html = '<div class="empty-message">✨ 没有组合包含所有选中的标签，请调整选择</div>';
+        } else {
+          if (star5.length > 0) {
+            html += '<div class="star-block">';
+            html += `<div class="star-header star-5">★★★★★ <span>${star5.length} 个组合</span></div>`;
+            html += '<div class="combo-grid">';
+            star5.forEach(combo => {
+              html += `<div class="combo-card star-5">`;
+              html += `<div class="tag-list">`;
+              combo.标签.forEach(tag => {
+                const selectedClass = selected.includes(tag) ? ' tag-selected' : '';
+                html += `<span class="tag-badge${selectedClass}">${tag}</span>`;
+              });
+              html += `</div>`;
+              html += `<div class="operator-names">`;
+              combo.名字.forEach(name => {
+                html += `<span class="operator-name">${name}</span>`;
+              });
+              html += `</div>`;
+              html += `</div>`;
+            });
+            html += '</div></div>';
+          }
+          if (star4.length > 0) {
+            html += '<div class="star-block">';
+            html += `<div class="star-header star-4">★★★★ <span>${star4.length} 个组合</span></div>`;
+            html += '<div class="combo-grid">';
+            star4.forEach(combo => {
+              html += `<div class="combo-card star-4">`;
+              html += `<div class="tag-list">`;
+              combo.标签.forEach(tag => {
+                const selectedClass = selected.includes(tag) ? ' tag-selected' : '';
+                html += `<span class="tag-badge${selectedClass}">${tag}</span>`;
+              });
+              html += `</div>`;
+              html += `<div class="operator-names">`;
+              combo.名字.forEach(name => {
+                html += `<span class="operator-name">${name}</span>`;
+              });
+              html += `</div>`;
+              html += `</div>`;
+            });
+            html += '</div></div>';
+          }
+        }
+
+        resultArea.innerHTML = html;
+      }
+
+      // 监听复选框变化
+      document.querySelectorAll('.tag-checkbox').forEach(cb => {
+        cb.addEventListener('change', updateResults);
+      });
+
+      // 清空
+      document.getElementById('clearBtn').addEventListener('click', () => {
+        document.querySelectorAll('.tag-checkbox').forEach(cb => cb.checked = false);
+        updateResults();
+      });
+
+      // 全选
+      document.getElementById('selectAllBtn').addEventListener('click', () => {
+        document.querySelectorAll('.tag-checkbox').forEach(cb => cb.checked = true);
+        updateResults();
+      });
+
+      // 初始显示所有组合（无选中标签时显示全部）
+      updateResults();
+    })();
+  </script>
+</body>
+
+</html>
