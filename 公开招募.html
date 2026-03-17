@@ -106,11 +106,24 @@
       margin-right: 8px;
       accent-color: #3b82f6;
       transform: scale(1.1);
+      pointer-events: auto;
     }
 
     .tag-checkbox-item.selected {
       background: #dbeafe;
       border-color: #3b82f6;
+    }
+
+    .tag-checkbox-item.unavailable {
+      opacity: 0.55;
+      background: #eef2f6;
+      border-color: #b9c7da;
+      cursor: not-allowed;
+    }
+
+    .tag-checkbox-item.unavailable:hover {
+      background: #e2e8f0;
+      border-color: #a0b3cc;
     }
 
     .action-bar {
@@ -239,7 +252,8 @@
       font-weight: 500;
     }
 
-    .combo-card.star-5 .tag-badge.tag-selected,.combo-card.star-4 .tag-badge.tag-selected {
+    .combo-card.star-5 .tag-badge.tag-selected,
+    .combo-card.star-4 .tag-badge.tag-selected {
       border: 2px solid #3b82f6;
     }
 
@@ -302,7 +316,8 @@
       <small>4星 / 5星 干员</small>
     </h1>
     <div class="subtitle">
-      选择任意标签，下方将列出所有包含这些标签的招募组合（标签集为超集）。每个组合显示其完整标签和对应的干员。
+      选择任意标签，下方将列出所有包含这些标签的招募组合（标签集为超集）。每个组合显示其完整标签和对应的干员。<br>
+      <span style="font-weight:500; color:#2563eb;">✨ 灰色标签表示与当前选中无法共存，点击它会清空之前的选择并单独选中它。</span>
     </div>
 
     <!-- 标签选择区 -->
@@ -313,7 +328,6 @@
       <div id="tagContainer" class="tag-grid"></div>
       <div class="action-bar">
         <button class="btn" id="clearBtn">清空标签</button>
-        <button class="btn btn-primary" id="selectAllBtn">全选标签</button>
       </div>
     </div>
 
@@ -325,12 +339,12 @@
     <!-- 结果区域 -->
     <div id="resultArea" class="result-section"></div>
 
-    <footer>点击标签实时筛选 · 基于已处理组合数据，排除3星</footer>
+    <footer>点击标签实时筛选 · 灰色标签不可组合，点击可重置筛选</footer>
   </div>
 
   <script>
     (function () {
-      // ----- 原始数据 (直接取自用户提供的最终结果，已排除3星) -----
+      // ----- 原始数据 -----
       const rawCombos = [
         {
           "标签": [
@@ -1198,10 +1212,10 @@
         }
       ];
 
-      // 为了确保数据干净，再次过滤星级（以防万一）
+      // 仅保留4星和5星
       const combos = rawCombos.filter(c => c.星级 === '4' || c.星级 === '5');
 
-      // ----- 提取所有标签（唯一，排序）-----
+      // ----- 提取所有标签（基于真实数据，避免无关标签）-----
       const allTagsSet = new Set();
       combos.forEach(combo => {
         combo.标签.forEach(tag => allTagsSet.add(tag));
@@ -1215,13 +1229,12 @@
       const tagContainer = document.getElementById('tagContainer');
       function renderTags() {
         tagContainer.innerHTML = '';
-        let id = 1;
-        allTags.forEach(tag => {
+        allTags.forEach((tag, index) => {
           const label = document.createElement('label');
           label.className = 'tag-checkbox-item';
-          label.for = `tag-checkbox-item-${id}`;
+          label.htmlFor = `tag-${index}`;
           const checkbox = document.createElement('input');
-          checkbox.id = `tag-checkbox-item-${id}`;
+          checkbox.id = `tag-${index}`;
           checkbox.type = 'checkbox';
           checkbox.value = tag;
           checkbox.className = 'tag-checkbox';
@@ -1232,13 +1245,41 @@
       }
       renderTags();
 
-      // 获取选中的标签数组
+      // 获取当前选中的标签数组
       function getSelectedTags() {
         const checkboxes = document.querySelectorAll('.tag-checkbox:checked');
         return Array.from(checkboxes).map(cb => cb.value);
       }
 
-      // ----- 更新结果 -----
+      // 判断：在已选集合selected的基础上，加入tag是否至少存在一个组合
+      function isTagCombinable(selected, tag) {
+        if (selected.length === 0) return true; // 无筛选时所有标签都可用
+        const testSet = selected.concat(tag);
+        return combos.some(combo => testSet.every(t => combo.标签.includes(t)));
+      }
+
+      // 更新每个标签的“不可用”样式 (灰色)
+      function refreshTagAvailability() {
+        const selected = getSelectedTags();
+        const checkboxes = document.querySelectorAll('.tag-checkbox');
+        checkboxes.forEach(cb => {
+          const tag = cb.value;
+          const item = cb.closest('.tag-checkbox-item');
+          if (selected.includes(tag)) {
+            // 已选中的标签永远不要置灰
+            item.classList.remove('unavailable');
+          } else {
+            const available = isTagCombinable(selected, tag);
+            if (!available) {
+              item.classList.add('unavailable');
+            } else {
+              item.classList.remove('unavailable');
+            }
+          }
+        });
+      }
+
+      // 更新结果区域 (组合列表) 并刷新标签可用性
       const selectedCountSpan = document.getElementById('selectedCount');
       const comboCountSpan = document.getElementById('comboCount');
       const resultArea = document.getElementById('resultArea');
@@ -1247,10 +1288,10 @@
         const selected = getSelectedTags();
         selectedCountSpan.textContent = selected.length;
 
-        // 筛选组合：组合的标签必须包含所有选中的标签（即 selected 是 combo.标签 的子集）
-        let matched = combos.filter(combo => {
-          return selected.every(tag => combo.标签.includes(tag));
-        });
+        // 筛选包含所有选中标签的组合
+        let matched = combos.filter(combo =>
+          selected.every(tag => combo.标签.includes(tag))
+        );
 
         // 按星级分组
         const star5 = matched.filter(c => c.星级 === '5').sort((a, b) => a.标签.length - b.标签.length);
@@ -1258,7 +1299,7 @@
 
         comboCountSpan.textContent = matched.length;
 
-        // 渲染HTML
+        // 构建HTML
         let html = '';
         if (matched.length === 0) {
           html = '<div class="empty-message">✨ 没有组合包含所有选中的标签，请调整选择</div>';
@@ -1308,26 +1349,66 @@
         }
 
         resultArea.innerHTML = html;
+        // 每次更新结果后重新计算标签可用性样式
+        refreshTagAvailability();
       }
 
-      // 监听复选框变化
-      document.querySelectorAll('.tag-checkbox').forEach(cb => {
-        cb.addEventListener('change', updateResults);
+      // ---------- 自定义复选框事件处理 (支持置灰点击重置) ----------
+      function handleCheckboxChange(e) {
+        const checkbox = e.target;
+        if (!checkbox.classList.contains('tag-checkbox')) return;
+
+        const item = checkbox.closest('.tag-checkbox-item');
+        const isCurrentlyUnavailable = item.classList.contains('unavailable');
+
+        // 如果点击的是 置灰(不可用) 标签 并且 该复选框被选中 (即用户试图选中它)
+        if (isCurrentlyUnavailable && checkbox.checked) {
+          // 清空所有其他复选框，只保留当前这一个
+          document.querySelectorAll('.tag-checkbox').forEach(cb => {
+            if (cb !== checkbox) {
+              cb.checked = false;
+            }
+          });
+          // 当前复选框保持选中 (已经是true)
+          // 直接更新结果 (会重新计算可用性, 当前标签应该变为可用)
+          updateResults();
+        } else {
+          // 正常点击：直接更新 (选中或取消选中)
+          updateResults();
+        }
+      }
+
+      // 用事件委托 (更优雅，避免重复绑定)
+      tagContainer.addEventListener('change', function (e) {
+        const checkbox = e.target;
+        if (!checkbox.classList.contains('tag-checkbox')) return;
+
+        const item = checkbox.closest('.tag-checkbox-item');
+        const isCurrentlyUnavailable = item.classList.contains('unavailable');
+
+        // 注意：在change事件触发时，checkbox.checked 已经变为新状态
+        if (isCurrentlyUnavailable && checkbox.checked) {
+          // 置灰标签被选中 → 清空其他，保留自己
+          document.querySelectorAll('.tag-checkbox').forEach(cb => {
+            if (cb !== checkbox) {
+              cb.checked = false;
+            }
+          });
+          // 当前checkbox保持选中，更新
+          updateResults();
+        } else {
+          // 正常情况 (包括取消选中 或 选中可用标签)
+          updateResults();
+        }
       });
 
-      // 清空
+      // 清空按钮
       document.getElementById('clearBtn').addEventListener('click', () => {
         document.querySelectorAll('.tag-checkbox').forEach(cb => cb.checked = false);
         updateResults();
       });
 
-      // 全选
-      document.getElementById('selectAllBtn').addEventListener('click', () => {
-        document.querySelectorAll('.tag-checkbox').forEach(cb => cb.checked = true);
-        updateResults();
-      });
-
-      // 初始显示所有组合（无选中标签时显示全部）
+      // 初始化显示
       updateResults();
     })();
   </script>
