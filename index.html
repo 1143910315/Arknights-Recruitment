@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
   <title>公开招募 · 标签组合筛选（4/5星）</title>
   <script src="js/combos.js"></script>
   <style>
@@ -14,10 +14,11 @@
     }
 
     body {
-      font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+      font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
       background: #f0f3f8;
       padding: 24px;
       overflow-y: scroll;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .container {
@@ -37,6 +38,7 @@
       font-size: 1.9rem;
       color: #0b1c33;
       margin-bottom: 8px;
+      flex-wrap: wrap;
     }
 
     h1 small {
@@ -47,6 +49,7 @@
       padding: 6px 16px;
       border-radius: 40px;
       margin-left: auto;
+      white-space: nowrap;
     }
 
     .subtitle {
@@ -57,6 +60,11 @@
       background: #f8fafd;
       border-radius: 0 20px 20px 0;
       line-height: 1.6;
+      font-size: 1rem;
+    }
+
+    .subtitle span {
+      display: inline-block;
     }
 
     .tag-panel {
@@ -96,6 +104,7 @@
       transition: all 0.15s;
       user-select: none;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+      -webkit-touch-callout: none;
     }
 
     .tag-checkbox-item:hover {
@@ -108,6 +117,7 @@
       accent-color: #3b82f6;
       transform: scale(1.1);
       pointer-events: auto;
+      flex-shrink: 0;
     }
 
     .tag-checkbox-item.selected {
@@ -168,6 +178,7 @@
       cursor: pointer;
       transition: 0.15s;
       color: #1e2a44;
+      touch-action: manipulation;
     }
 
     .btn:hover {
@@ -201,6 +212,7 @@
 
     .star-block {
       flex-grow: 1;
+      width: 0;
       margin-bottom: 40px;
     }
 
@@ -213,6 +225,7 @@
       padding-bottom: 12px;
       border-bottom: 4px solid;
       margin-bottom: 20px;
+      flex-wrap: wrap;
     }
 
     .star-header span {
@@ -222,6 +235,7 @@
       padding: 5px 22px;
       font-size: 1.1rem;
       font-weight: 500;
+      white-space: nowrap;
     }
 
     .star-5 {
@@ -331,6 +345,256 @@
       text-align: center;
       color: #6c7a96;
       font-size: 0.95rem;
+      padding: 0 10px;
+    }
+
+    @media screen and (max-width: 1200px) {
+      .result-section {
+        flex-direction: column;
+      }
+
+      .star-block {
+        width: auto;
+      }
+    }
+
+    @media screen and (max-width: 700px) {
+      body {
+        padding: 16px;
+      }
+
+      .container {
+        padding: 20px;
+        border-radius: 28px;
+      }
+
+      h1 {
+        font-size: 1.7rem;
+      }
+
+      h1 small {
+        font-size: 0.85rem;
+        padding: 5px 14px;
+      }
+
+      .subtitle {
+        font-size: 0.93rem;
+        padding-left: 14px;
+      }
+
+    }
+
+    @media screen and (max-width: 600px) {
+      body {
+        padding: 12px;
+      }
+
+      .container {
+        padding: 16px;
+        border-radius: 24px;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+        gap: 8px;
+      }
+
+      h1 small {
+        font-size: 0.8rem;
+        padding: 4px 12px;
+        margin-left: 0;
+      }
+
+      .subtitle {
+        font-size: 0.88rem;
+        padding-left: 12px;
+        margin-bottom: 22px;
+        border-left-width: 4px;
+      }
+
+      .tag-panel {
+        padding: 18px;
+        border-radius: 22px;
+        margin-bottom: 22px;
+      }
+
+      .tag-title {
+        font-size: 1.1rem;
+        margin-bottom: 14px;
+      }
+
+      .tag-grid {
+        gap: 8px;
+        margin-bottom: 18px;
+      }
+
+      .tag-checkbox-item {
+        padding: 6px 14px;
+        font-size: 0.85rem;
+      }
+
+      .tag-checkbox-item input {
+        margin-right: 6px;
+        transform: scale(1);
+      }
+
+      .btn {
+        padding: 7px 22px;
+        font-size: 0.9rem;
+      }
+
+      .stats {
+        padding: 8px 20px;
+        font-size: 0.9rem;
+        margin-bottom: 20px;
+      }
+
+      .combo-card {
+        padding: 14px 20px;
+        gap: 16px;
+        border-radius: 40px;
+      }
+
+      .tag-badge {
+        padding: 4px 14px;
+        font-size: 0.85rem;
+      }
+
+      .operator-name {
+        padding: 4px 16px;
+        font-size: 0.9rem;
+      }
+
+      .star-header {
+        font-size: 1.5rem;
+        gap: 10px;
+      }
+
+      .star-header span {
+        padding: 4px 16px;
+        font-size: 1rem;
+      }
+
+      .combo-grid {
+        gap: 14px;
+        padding: 0 4px;
+      }
+
+      footer {
+        font-size: 0.85rem;
+        margin-top: 30px;
+      }
+    }
+
+    @media screen and (max-width: 480px) {
+      .container {
+        padding: 14px;
+        border-radius: 22px;
+      }
+
+      h1 {
+        font-size: 1.35rem;
+      }
+
+      h1 small {
+        font-size: 0.75rem;
+        padding: 4px 10px;
+      }
+
+      .tag-checkbox-item {
+        padding: 5px 12px;
+        font-size: 0.8rem;
+      }
+
+      .combo-card {
+        padding: 12px 16px;
+        border-radius: 32px;
+      }
+
+      .tag-badge {
+        padding: 4px 12px;
+        font-size: 0.8rem;
+      }
+
+      .operator-name {
+        padding: 4px 14px;
+        font-size: 0.85rem;
+      }
+
+      .stats {
+        padding: 6px 16px;
+        font-size: 0.85rem;
+      }
+
+      .star-header {
+        font-size: 1.3rem;
+      }
+
+      .star-header span {
+        padding: 3px 14px;
+        font-size: 0.9rem;
+      }
+
+      .empty-message {
+        padding: 30px 20px;
+        font-size: 1rem;
+        border-radius: 40px;
+      }
+    }
+
+    @media screen and (max-width: 380px) {
+      .tag-checkbox-item {
+        padding: 4px 10px;
+        font-size: 0.75rem;
+      }
+
+      .combo-card {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 14px 14px;
+        gap: 12px;
+      }
+
+      .operator-names {
+        width: 100%;
+      }
+
+      .operator-name {
+        font-size: 0.8rem;
+        padding: 3px 12px;
+      }
+
+      .tag-badge {
+        font-size: 0.75rem;
+        padding: 3px 10px;
+      }
+
+      .stats {
+        font-size: 0.8rem;
+      }
+
+      footer {
+        font-size: 0.75rem;
+      }
+    }
+
+    @media screen and (max-width: 320px) {
+      body {
+        padding: 6px;
+      }
+
+      .container {
+        padding: 10px;
+      }
+
+      h1 {
+        font-size: 1.2rem;
+      }
+
+      .tag-checkbox-item {
+        padding: 4px 8px;
+        font-size: 0.7rem;
+      }
     }
   </style>
 </head>
@@ -344,7 +608,8 @@
     <div class="subtitle">
       选择任意标签，下方将列出所有包含这些标签的招募组合。标签带有 <span style="color:#a855f7; font-weight:600;">紫色高亮</span> 表示可与当前选中构成四星组合，
       <span style="color:#fbbf24; font-weight:600;">金色高亮</span> 表示可构成五星组合（优先显示金色）。<br>
-      <span style="background:#eef2f6; padding:2px 8px; border-radius:20px;">灰色标签（不可用）</span> 表示无法与当前选中构成任何四星或五星组合，此时点击它会清空其他已选标签，并只选中自身。
+      <span style="background:#eef2f6; padding:2px 8px; border-radius:20px;">灰色标签（不可用）</span>
+      表示无法与当前选中构成任何四星或五星组合，此时点击它会清空其他已选标签，并只选中自身。
     </div>
 
     <!-- 标签选择区 -->
@@ -366,7 +631,6 @@
     <!-- 结果区域 -->
     <div id="resultArea" class="result-section"></div>
 
-    <!-- 修改点2：底部 footer 简化并明确灰色标签交互 -->
     <footer>点击标签实时筛选 · 灰色标签不可组合，点击将只保留自身</footer>
   </div>
 
