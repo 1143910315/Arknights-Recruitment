@@ -341,8 +341,9 @@
       <small>4星 / 5星 干员</small>
     </h1>
     <div class="subtitle">
-      选择任意标签，下方将列出所有包含这些标签的招募组合。标签带有 <span style="color:#a855f7; font-weight:600;">紫色外光</span> 表示可与当前选中构成四星组合，
-      <span style="color:#fbbf24; font-weight:600;">金色外光</span> 表示可构成五星组合（优先显示金色）。灰色标签点击会重置为只选自身。
+      选择任意标签，下方将列出所有包含这些标签的招募组合。标签带有 <span style="color:#a855f7; font-weight:600;">紫色高亮</span> 表示可与当前选中构成四星组合，
+      <span style="color:#fbbf24; font-weight:600;">金色高亮</span> 表示可构成五星组合（优先显示金色）。<br>
+      <span style="background:#eef2f6; padding:2px 8px; border-radius:20px;">灰色标签（不可用）</span> 表示无法与当前选中构成任何四星或五星组合，此时点击它会清空其他已选标签，并只选中自身。
     </div>
 
     <!-- 标签选择区 -->
@@ -364,7 +365,8 @@
     <!-- 结果区域 -->
     <div id="resultArea" class="result-section"></div>
 
-    <footer>点击标签实时筛选 · 灰色标签不可组合，点击可重置筛选</footer>
+    <!-- 修改点2：底部 footer 简化并明确灰色标签交互 -->
+    <footer>点击标签实时筛选 · 灰色标签不可组合，点击将只保留自身</footer>
   </div>
 
   <script>
